@@ -177,7 +177,14 @@ with st.sidebar:
 
     st.divider()
     st.caption("**Kiến trúc hệ thống:**")
-    st.caption("Hybrid Retrieval (Semantic + BM25) → RRF Rerank → PageIndex Fallback → LLM Generation có Citation")
+    st.caption(
+        "Hybrid Retrieval (Semantic + BM25) → RRF Rerank → PageIndex Fallback → "
+        "LLM Generation có Citation (+ conversation memory 3 lượt gần nhất)"
+    )
+
+    if st.button("🗑️ Xoá hội thoại", use_container_width=True):
+        st.session_state.messages = []
+        st.rerun()
 
 # =============================================================================
 # SESSION STATE
@@ -217,12 +224,21 @@ if query:
     with st.chat_message("user"):
         st.markdown(query)
 
+    # Conversation memory: 3 cặp hỏi-đáp gần nhất (không tính câu hỏi vừa gửi)
+    # trước đó, để LLM hiểu ngữ cảnh câu hỏi nối tiếp (vd "còn ở đó thì sao?")
+    # mà không làm phình prompt / trộn quá nhiều ngữ cảnh cũ không liên quan.
+    history_msgs = [
+        {"role": m["role"], "content": m["content"]}
+        for m in st.session_state.messages[:-1]
+        if m["role"] in ("user", "assistant")
+    ][-6:]
+
     # Sinh câu trả lời từ RAG Pipeline
     with st.chat_message("assistant"):
         with st.spinner("Đang tìm kiếm tài liệu và tổng hợp câu trả lời..."):
             try:
                 from src.task10_generation import generate_with_citation
-                response = generate_with_citation(query, top_k=top_k)
+                response = generate_with_citation(query, top_k=top_k, chat_history=history_msgs)
                 answer = response.get("answer", "Chưa thể trả lời.")
                 sources = response.get("sources", [])
 

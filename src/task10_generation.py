@@ -115,7 +115,11 @@ def format_context(chunks: list[dict]) -> str:
 # GENERATION
 # =============================================================================
 
-def generate_with_citation(query: str, top_k: int = TOP_K) -> dict:
+def generate_with_citation(
+    query: str,
+    top_k: int = TOP_K,
+    chat_history: list[dict] | None = None,
+) -> dict:
     """
     End-to-end RAG generation có citation.
 
@@ -123,12 +127,17 @@ def generate_with_citation(query: str, top_k: int = TOP_K) -> dict:
         1. Retrieve relevant chunks
         2. Reorder để tránh lost in the middle
         3. Format context với source labels
-        4. Build prompt (system + context + query)
+        4. Build prompt (system + [history] + context + query)
         5. Call LLM
         6. Return answer + sources
 
     Args:
         query: Câu hỏi của user
+        top_k: Số chunks lấy từ retrieval
+        chat_history: Các lượt hỏi-đáp trước đó (conversation memory), dạng
+            [{"role": "user"|"assistant", "content": str}, ...]. Chỉ nên truyền
+            vài lượt gần nhất (app.py giới hạn 3 cặp) để tránh phình prompt và
+            trộn ngữ cảnh cũ không liên quan vào câu trả lời hiện tại.
 
     Returns:
         {
@@ -156,17 +165,33 @@ def generate_with_citation(query: str, top_k: int = TOP_K) -> dict:
     # Step 4: Build prompt
     user_message = f"""Context:\n{context}\n\n---\n\nQuestion: {query}"""
 
-    # Step 5: Call LLM (OpenRouter — OpenAI-compatible API)
+    # Step 5: Call LLM — ưu tiên OpenRouter, fallback OpenAI trực tiếp nếu thiếu/không hợp lệ key
     from openai import OpenAI
-    api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("OPENAI_API_KEY")
-    client = OpenAI(api_key=api_key, base_url="https://openrouter.ai/api/v1")
+
+    openrouter_key = os.getenv("OPENROUTER_API_KEY")
+    openai_key = os.getenv("OPENAI_API_KEY")
+
+    # .env.example để lại placeholder "sk-or-v1-..." — coi như chưa điền, không phải key thật
+    if openrouter_key and openrouter_key.endswith("..."):
+        openrouter_key = None
+
+    if openrouter_key:
+        client = OpenAI(api_key=openrouter_key, base_url="https://openrouter.ai/api/v1")
+        model = LLM_MODEL
+    elif openai_key:
+        client = OpenAI(api_key=openai_key)
+        model = LLM_MODEL.split("/", 1)[-1]  # "openai/gpt-4o-mini" -> "gpt-4o-mini"
+    else:
+        raise RuntimeError("Thiếu OPENROUTER_API_KEY hoặc OPENAI_API_KEY trong .env")
+
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    if chat_history:
+        messages.extend(chat_history)
+    messages.append({"role": "user", "content": user_message})
 
     response = client.chat.completions.create(
-        model=LLM_MODEL,
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_message},
-        ],
+        model=model,
+        messages=messages,
         temperature=TEMPERATURE,
         top_p=TOP_P,
     )
