@@ -14,22 +14,21 @@ BM25 hoạt động thế nào:
     - Formula: score(q,d) = Σ IDF(qi) * (tf(qi,d) * (k1+1)) / (tf(qi,d) + k1*(1-b+b*|d|/avgdl))
     - k1=1.5 (term saturation), b=0.75 (length normalization)
 
-CP1 note: Task 4 (chunking thật) chưa xong lúc viết module này, nên corpus ở
-đây tự chunk bằng CHUNK_SIZE/CHUNK_OVERLAP (đúng hằng số contract ở TASKS.md
-§2: 800/100) thay vì import từ task4. Khi Task 4 xong, có thể thay
-`_load_corpus_from_standardized()` bằng chunks thật (Task 5 dùng chung) mà
-không đổi contract của `lexical_search()`.
+CP4 note: corpus BM25 dùng lại ĐÚNG chunk thật từ Task 4
+(load_documents() + chunk_documents()) thay vì tự chunk riêng như ở CP1.
+Lý do: nếu dense (Task 5, ChromaDB) và sparse (Task 6, BM25) chunk trên 2 ranh
+giới khác nhau, RRF (Task 7) không thể dedupe 2 kết quả trỏ tới cùng 1 đoạn văn
+bản (so khớp content y hệt) → context cuối đưa cho LLM bị trùng lặp/phân mảnh
+thay vì 1 chunk sạch. Phát hiện qua RAGAS faithfulness thấp bất thường ở CP5 khi
+debug 2 kết quả gần giống nhau nhưng không trùng cho cùng 1 câu hỏi rõ ràng có
+evidence trong corpus.
 """
 
 import re
-from pathlib import Path
 
 from rank_bm25 import BM25Okapi
 
-STANDARDIZED_DIR = Path(__file__).parent.parent / "data" / "standardized"
-
-CHUNK_SIZE = 800
-CHUNK_OVERLAP = 100
+from .task4_chunking_indexing import chunk_documents, load_documents
 
 _TOKEN_RE = re.compile(r"\w+", re.UNICODE)
 
@@ -39,47 +38,9 @@ def _tokenize(text: str) -> list[str]:
     return _TOKEN_RE.findall(text.lower())
 
 
-def _chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> list[str]:
-    """Chunk text theo ký tự, có overlap. Chunk cuối rỗng sau strip sẽ bị bỏ."""
-    text = text.strip()
-    if len(text) <= chunk_size:
-        return [text] if text else []
-
-    step = chunk_size - overlap
-    chunks = []
-    for start in range(0, len(text), step):
-        piece = text[start:start + chunk_size].strip()
-        if piece:
-            chunks.append(piece)
-        if start + chunk_size >= len(text):
-            break
-    return chunks
-
-
-def _load_corpus_from_standardized(standardized_dir: Path = STANDARDIZED_DIR) -> list[dict]:
-    """
-    Đọc toàn bộ .md trong data/standardized/, chunk theo CHUNK_SIZE/CHUNK_OVERLAP.
-
-    Returns:
-        List of {'content': str, 'metadata': {'source', 'chunk_id', 'category'}}
-    """
-    corpus: list[dict] = []
-    if not standardized_dir.exists():
-        return corpus
-
-    for md_file in sorted(standardized_dir.rglob("*.md")):
-        content = md_file.read_text(encoding="utf-8")
-        category = "legal" if "legal" in md_file.parts else "news"
-        for i, chunk in enumerate(_chunk_text(content)):
-            corpus.append({
-                "content": chunk,
-                "metadata": {
-                    "source": md_file.name,
-                    "chunk_id": f"{md_file.stem}_{i}",
-                    "category": category,
-                },
-            })
-    return corpus
+def _load_corpus() -> list[dict]:
+    """Chunk thật từ Task 4 — cùng ranh giới với chunks đã index vào ChromaDB (Task 5)."""
+    return chunk_documents(load_documents())
 
 
 # Cache toàn cục — lazy-build khi lexical_search() được gọi lần đầu.
@@ -102,11 +63,11 @@ def build_bm25_index(corpus: list[dict]) -> BM25Okapi:
 
 
 def _ensure_index() -> None:
-    """Lazy-load corpus từ data/standardized/ và build index nếu chưa có."""
+    """Lazy-load corpus (chunk thật của Task 4) và build index nếu chưa có."""
     global CORPUS, _BM25_INDEX
     if _BM25_INDEX is not None:
         return
-    CORPUS = _load_corpus_from_standardized()
+    CORPUS = _load_corpus()
     _BM25_INDEX = build_bm25_index(CORPUS) if CORPUS else None
 
 
