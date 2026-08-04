@@ -18,7 +18,7 @@ CHUNK_SIZE = 800
 CHUNK_OVERLAP = 100
 CHUNKING_METHOD = "recursive"
 
-# EMBEDDING_MODEL = "all-MiniLM-L6-v2": Model nhe, toc do cao (~90MB), khoi tao va index trong vai giay.
+# EMBEDDING_MODEL = "all-MiniLM-L6-v2": Model nhẹ, tốc độ cao (~90MB), khởi tạo và index trong vài giây.
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 EMBEDDING_DIM = 384
 

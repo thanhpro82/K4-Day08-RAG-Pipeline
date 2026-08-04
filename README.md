@@ -547,22 +547,38 @@ run_dashboard()
 
 ---
 
-### Kiến Trúc Hệ Thống
+### Kiến Trúc Hệ Thống (RAG Pipeline v2 — Smart Travel Guide)
 
-```
-[Vẽ diagram kiến trúc ở đây]
+```mermaid
+graph TD
+    A["Tài Liệu Du Lịch (PDF / Web JSON)"] -->|Task 1, 2, 3: R1| B["Standardized Markdown Files"]
+    B -->|Task 4: R1| C["ChromaDB Vector Store (local)"]
+    
+    Q["User Query (Câu hỏi du lịch)"] -->|Task 5: R2| D["Semantic Search (Dense)"]
+    Q -->|Task 6: R2| E["BM25 Lexical Search (Sparse)"]
+    
+    D -->|Dense Ranked List| F["RRF Reranking (Task 7: R2)"]
+    E -->|Sparse Ranked List| F
+    
+    F -->|Cosine Score >= Threshold| G["Top-K Relevant Chunks"]
+    F -->|Cosine Score < Threshold| H["PageIndex Vectorless Fallback (Task 8: R1/R2)"]
+    
+    G -->|Task 9: R3| I["Retrieval Pipeline"]
+    H -->|Task 9: R3| I
+    
+    I -->|Task 10: Reorder + Citation| J["LLM Generation"]
+    J --> K["Streamlit Chatbot UI (app.py: R3)"]
 ```
 
 ---
 
-### Phân Công Công Việc
+### Phân Công Công Việc (Chủ Đề 5 — Smart Travel Guide)
 
 | Thành viên | MSSV | Nhiệm vụ | Trạng thái |
 |-----------|------|----------|------------|
-| | | | |
-| | | | |
-| | | | |
-| | | | |
+| **Nguyễn Tuấn Thành** | **2A202601967** | **R1 — Team Lead & Data Engineer** (Task 1-4, Setup, Architecture Diagram, Git Merge) | **Hoàn thành (15/15 PASSED)** |
+| **Nguyễn Ngọc Gia Bảo** | **2A202601234** | **R2 — Retrieval Specialist** (Task 5-8, Reranking, A/B Config) | **Đang thực hiện** |
+| **Trần Quí Đôn** | **2A202601052** | **R3 — Pipeline & App Specialist** (Task 9-10, Streamlit Chatbot UI, RAGAS Eval) | **Đang thực hiện** |
 
 ---
 
