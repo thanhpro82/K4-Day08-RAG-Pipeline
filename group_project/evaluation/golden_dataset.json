@@ -1,17 +1,77 @@
 [
   {
-    "question": "Người mua có thể yêu cầu trả hàng/hoàn tiền trong thời hạn bao lâu sau khi nhận hàng?",
-    "expected_answer": "Trong vòng 15 ngày kể từ khi giao hàng thành công (24 giờ đối với thực phẩm tươi sống/đông lạnh).",
-    "expected_context": "Trang Returns and Refunds Policy, mục Return/Refund Eligibility"
+    "question": "Nên đi du lịch Hà Giang vào thời điểm nào trong năm để ngắm hoa tam giác mạch?",
+    "expected_answer": "Khoảng tháng 10-11, khi hoa tam giác mạch nở rộ trên các cung đường Đồng Văn - Mèo Vạc.",
+    "expected_context": "Cẩm nang du lịch Hà Giang, mục thời điểm lý tưởng để du lịch"
   },
   {
-    "question": "Shopee hỗ trợ những phương thức thanh toán nào?",
-    "expected_answer": "ShopeePay Wallet, thẻ tín dụng/ghi nợ, trả góp qua thẻ, QR Code, chuyển khoản qua app ngân hàng, thẻ NAPAS, Apple Pay, Google Pay, và COD.",
-    "expected_context": "Trang Payment Methods Overview"
+    "question": "Cung đường nào ở Hà Giang có điểm ngắm cảnh nổi tiếng là đèo Mã Pí Lèng?",
+    "expected_answer": "Cung đường Đồng Văn - Mèo Vạc.",
+    "expected_context": "Cẩm nang du lịch Hà Giang, mục lịch trình gợi ý"
   },
   {
-    "question": "Người bán không được đăng bán những sản phẩm nào?",
-    "expected_answer": "Hàng giả/nhái, sản phẩm bất hợp pháp, vi phạm sở hữu trí tuệ, và các mặt hàng nằm trong danh sách cấm của sàn.",
-    "expected_context": "Trang Product Listing Regulations, mục Prohibited Content"
+    "question": "Đi phượt Hà Giang bằng xe máy nên xuất phát vào giờ nào để tránh sương mù?",
+    "expected_answer": "Nên xuất phát sớm khoảng 6-7 giờ sáng để tránh sương mù và nắng gắt buổi trưa.",
+    "expected_context": "Cẩm nang du lịch Hà Giang, mục lưu ý khi di chuyển"
+  },
+  {
+    "question": "Những món ăn nào nhất định phải thử khi đến Quy Nhơn?",
+    "expected_answer": "Bánh xèo tôm nhảy, bún chả cá, nem chợ huyện và bánh hỏi lòng heo.",
+    "expected_context": "Cẩm nang du lịch Quy Nhơn, mục đặc sản ẩm thực"
+  },
+  {
+    "question": "Ở Quy Nhơn có thể tìm ăn đặc sản địa phương giá bình dân ở khu vực nào?",
+    "expected_answer": "Khu ẩm thực đêm gần biển Quy Nhơn có nhiều quán ăn chuẩn vị địa phương với giá bình dân.",
+    "expected_context": "Cẩm nang du lịch Quy Nhơn, mục địa điểm ăn uống"
+  },
+  {
+    "question": "Thời tiết Đà Lạt như thế nào và du khách cần chuẩn bị trang phục gì?",
+    "expected_answer": "Đà Lạt se lạnh quanh năm, nhiệt độ trung bình 18-23 độ C, nên mang theo áo khoác nhẹ kể cả mùa hè.",
+    "expected_context": "Cẩm nang du lịch Đà Lạt, mục khí hậu và chuẩn bị hành lý"
+  },
+  {
+    "question": "Những địa điểm tham quan nổi bật nào ở Đà Lạt du khách không nên bỏ lỡ?",
+    "expected_answer": "Hồ Xuân Hương, Thung lũng Tình Yêu, Đồi chè Cầu Đất, Ga Đà Lạt cổ.",
+    "expected_context": "Cẩm nang du lịch Đà Lạt, mục điểm tham quan"
+  },
+  {
+    "question": "Khi tham gia hoạt động du lịch mạo hiểm như leo núi, trekking, du khách bắt buộc phải làm gì?",
+    "expected_answer": "Bắt buộc phải mua bảo hiểm du lịch và tuân thủ hướng dẫn của hướng dẫn viên địa phương.",
+    "expected_context": "Quy định an toàn du lịch, mục hoạt động mạo hiểm"
+  },
+  {
+    "question": "Khi đi du lịch, du khách nên chuẩn bị giấy tờ và thông báo lịch trình như thế nào để đảm bảo an toàn?",
+    "expected_answer": "Luôn mang theo giấy tờ tùy thân và thông báo lịch trình cho người thân trước khi tham gia hoạt động.",
+    "expected_context": "Quy định an toàn du lịch, mục chuẩn bị trước chuyến đi"
+  },
+  {
+    "question": "Khi nhận phòng homestay/khách sạn, khách lưu trú cần xuất trình giấy tờ gì?",
+    "expected_answer": "Phải xuất trình CMND/CCCD hoặc hộ chiếu khi nhận phòng.",
+    "expected_context": "Quy định lưu trú homestay/khách sạn, mục thủ tục nhận phòng"
+  },
+  {
+    "question": "Giờ check-in và check-out tiêu chuẩn tại homestay/khách sạn là mấy giờ?",
+    "expected_answer": "Giờ check-in tiêu chuẩn là 14h, check-out là 12h.",
+    "expected_context": "Quy định lưu trú homestay/khách sạn, mục giờ nhận và trả phòng"
+  },
+  {
+    "question": "Trước khi đặt homestay, du khách cần lưu ý điều gì về đặt cọc và hủy phòng?",
+    "expected_answer": "Một số homestay yêu cầu đặt cọc trước và có chính sách hủy phòng khác nhau, cần đọc kỹ trước khi đặt.",
+    "expected_context": "Quy định lưu trú homestay/khách sạn, mục chính sách đặt cọc và hủy phòng"
+  },
+  {
+    "question": "Gợi ý lịch trình du lịch Hà Giang 3 ngày 2 đêm tự túc bằng xe máy cho người đi lần đầu như thế nào?",
+    "expected_answer": "Tôi không thể xác minh thông tin này từ nguồn hiện có (cần dữ liệu lịch trình chi tiết 3N2Đ từ cẩm nang gốc để trả lời đầy đủ).",
+    "expected_context": "Cẩm nang du lịch Hà Giang, mục lịch trình gợi ý chi tiết"
+  },
+  {
+    "question": "Đến Hà Nội du lịch tự túc, du khách nên tham khảo thông tin gì trong cẩm nang?",
+    "expected_answer": "Tôi không thể xác minh thông tin này từ nguồn hiện có (cẩm nang Hà Nội cần được R1 thu thập và chuẩn hoá).",
+    "expected_context": "Cẩm nang du lịch Hà Nội (chưa có dữ liệu tại thời điểm soạn golden dataset)"
+  },
+  {
+    "question": "Đà Nẵng có những lưu ý an toàn nào riêng khi tắm biển hoặc tham gia thể thao dưới nước?",
+    "expected_answer": "Tôi không thể xác minh thông tin này từ nguồn hiện có (cẩm nang Đà Nẵng và quy định an toàn dưới nước cần được bổ sung).",
+    "expected_context": "Cẩm nang du lịch Đà Nẵng / Quy định an toàn du lịch (chưa có dữ liệu tại thời điểm soạn golden dataset)"
   }
 ]
