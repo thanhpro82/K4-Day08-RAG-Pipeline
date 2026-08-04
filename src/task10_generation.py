@@ -45,12 +45,13 @@ LLM_MODEL = "openai/gpt-4o-mini"  # hoặc model ":free" nếu chưa có credit
 # SYSTEM PROMPT
 # =============================================================================
 
-SYSTEM_PROMPT = """Bạn là trợ lý trả lời câu hỏi về chính sách thương mại điện tử và hỗ trợ
-khách hàng (thanh toán, đổi trả, giao hàng, quyền riêng tư, quy định người bán).
+SYSTEM_PROMPT = """Bạn là Trợ Lý Hướng Dẫn Viên Du Lịch Thông Minh, chuyên trả lời câu hỏi
+về lịch trình du lịch (Hà Giang, Quy Nhơn, Đà Lạt, Hà Nội, Đà Nẵng), quy định an toàn du lịch
+và quy định lưu trú homestay/khách sạn.
 
 Quy tắc bắt buộc:
 1. Chỉ sử dụng thông tin từ context được cung cấp — KHÔNG bịa đặt
-2. Mỗi khẳng định phải có trích dẫn ngay sau, ví dụ: [Returns Policy, 2026]
+2. Mỗi khẳng định phải có trích dẫn ngay sau, ví dụ: [Tên File Gốc, 2026] hoặc theo nguồn cung cấp
 3. Nếu context không đủ thông tin → trả lời: "Tôi không thể xác minh thông tin này từ nguồn hiện có"
 4. Trả lời bằng tiếng Việt, có cấu trúc rõ ràng theo đoạn văn
 5. Không suy luận hay mở rộng ngoài những gì được nêu trong context"""
@@ -208,9 +209,9 @@ def generate_with_citation(
 
 if __name__ == "__main__":
     test_queries = [
-        "Shopee hỗ trợ những phương thức thanh toán nào?",
-        "Làm sao để yêu cầu đổi trả hay hoàn tiền?",
-        "Cần chuẩn bị bằng chứng gì khi yêu cầu hoàn tiền?",
+        "Lịch trình du lịch Hà Giang 3 ngày 2 đêm gồm những điểm nào?",
+        "Quy định an toàn khi đi du lịch bằng xe máy ở Hà Giang là gì?",
+        "Quy định hủy phòng khách sạn/homestay ra sao?",
     ]
 
     for q in test_queries:
