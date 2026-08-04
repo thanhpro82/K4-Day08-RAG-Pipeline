@@ -1,11 +1,11 @@
 # 📋 PHÂN CÔNG CÔNG VIỆC — NHÓM 3 THÀNH VIÊN
-
-> Phương án dành riêng cho nhóm **3 người** (LAB_GUIDE.md chỉ có phương án A/B/C cho nhóm 4–6 người).
-> Bám đúng 7 Checkpoint (180 phút) và thang điểm 50 (Task 1–10) + 30 (bài nhóm) + 20 (bonus).
+> **Chủ đề được chọn:** 🧳 **Chủ đề 5 — Trợ Lý Hướng Dẫn Viên Du Lịch Thông Minh (Smart Travel Guide)**
+> Tài liệu: Cẩm nang lịch trình du lịch (Hà Giang, Quy Nhơn, Đà Lạt, Hà Nội, Đà Nẵng), Quy định an toàn du lịch, Quy định lưu trú homestay/khách sạn.
+> Thang điểm: 50 (Task 1–10 cá nhân) + 30 (Bài nhóm Chatbot & RAGAS) + 20 (Bonus).
 
 ---
 
-## 1. Bảng Phân Vai
+## 1. Bảng Phân Vai (Chủ Đề 5: Smart Travel Guide)
 
 | Role | Tên vai trò | Sở hữu Task | Điểm Task 1–10 phụ trách | File chính |
 |:---:|---|---|:---:|---|
@@ -13,13 +13,13 @@
 | **R2** | 🔍 **Retrieval Engineer** | Task 5, 6, 7, 8 | 22 / 50 | `src/task5..8` |
 | **R3** | 🤖 **Pipeline, App & Evaluation** | Task 9, 10 + bài nhóm | 11 / 50 + 30 nhóm | `src/task9`, `src/task10`, `app.py`, `group_project/evaluation/` |
 
-**Điền thông tin nhóm:**
+**Thông tin nhóm:**
 
-| Role | Họ tên | MSSV | GitHub | Ghi chú |
-|:---:|---|---|---|---|
-| R1 | | | | |
-| R2 | | | | |
-| R3 | | | | |
+| Role | Họ tên | MSSV | Nhiệm vụ đảm nhận |
+|:---:|---|---|---|
+| **R1** | Nguyễn Tuấn Thành | 2A202601967 | Team Lead & Data Engineer (Task 1, 2, 3, 4) |
+| **R2** | Nguyễn Ngọc Gia Bảo | 2A202601234 | Retrieval Engineer (Task 5, 6, 7, 8) |
+| **R3** | Trần Quí Đôn | 2A202601052 | Pipeline, App & Evaluation (Task 9, 10 + Bài nhóm) |
 
 ---
 
