@@ -43,10 +43,19 @@ from .task8_pageindex_vectorless import pageindex_search
 # CONFIGURATION
 # =============================================================================
 
-# TODO (R2 — CP4): Calibrate threshold này bằng cách tự đo điểm cosine của semantic_search
-# cho câu hỏi liên quan vs câu hỏi lạc đề (xem ghi chú ở trên) — ĐỪNG copy nguyên
-# giá trị mẫu, mỗi corpus/embedding model sẽ cho khoảng điểm khác nhau.
-SCORE_THRESHOLD = 0.3   # Nếu best score (cosine gốc) < threshold → fallback PageIndex
+# CP4 (R2) — Calibrate bằng cách đo thật điểm cosine gốc (semantic_search, model
+# all-MiniLM-L6-v2) cho 8 câu on-topic (đúng chủ đề du lịch/quy định trong corpus)
+# vs 5 câu off-topic:
+#   on-topic  (Hà Giang, homestay, Đà Lạt, Quy Nhơn, Đà Nẵng, Hà Nội...): 0.5258 - 0.7263
+#   off-topic (Python, bitcoin, chuỗi vô nghĩa, vật lý lượng tử, FIFA...): 0.3278 - 0.5254
+# Model all-MiniLM-L6-v2 nén điểm cosine khá chặt (không tách bạch mạnh như model lớn
+# hơn, vd BAAI/bge-m3) nên 2 nhóm chồng lấn nhẹ quanh 0.51-0.53. Chọn 0.5 — nằm ngay
+# dưới điểm on-topic thấp nhất đo được (0.5258) để KHÔNG false-positive fallback cho
+# câu hỏi thật (ưu tiên tránh làm phiền user hơn là bắt trọn mọi câu lạc đề); những
+# câu lạc đề "nhẹ" nằm sát biên (python/bitcoin ~0.51-0.53) sẽ không trigger fallback,
+# nhưng vẫn được chặn ở lớp thứ 2: SYSTEM_PROMPT của Task 10 yêu cầu LLM trả lời
+# "không thể xác minh" khi context không đủ liên quan.
+SCORE_THRESHOLD = 0.5   # Nếu best score (cosine gốc) < threshold → fallback PageIndex
 DEFAULT_TOP_K = 5
 RERANK_METHOD = "rrf"  # "cross_encoder" | "mmr" | "rrf"
 

@@ -90,14 +90,24 @@ def _load_doc_ids() -> dict:
     return {}
 
 
-def pageindex_search(query: str, top_k: int = 5) -> list[dict]:
+def pageindex_search(
+    query: str, top_k: int = 5, max_retries: int = 1, retry_delay: float = 3.0
+) -> list[dict]:
     """
     Vectorless retrieval sử dụng PageIndex.
     Dùng làm fallback khi hybrid search không có kết quả tốt.
 
+    Server PageIndex đã quan sát thấy trả 504 Gateway Timeout không định kỳ (đặc
+    biệt khi context/prompt dài) — vì hàm này được gọi làm FALLBACK cuối trong
+    Task 9, để lỗi bay ra ngoài sẽ crash cả generate_with_citation(). Nên retry
+    vài lần; nếu vẫn lỗi thì trả [] (đúng contract list[dict]) để retrieve() ở
+    Task 9 tự rớt về kết quả hybrid thay vì sập toàn bộ pipeline.
+
     Args:
         query: Câu truy vấn
         top_k: Số lượng kết quả tối đa
+        max_retries: Số lần thử lại khi PageIndex lỗi/timeout
+        retry_delay: Thời gian chờ (giây) giữa các lần thử lại
 
     Returns:
         List of {
@@ -114,11 +124,25 @@ def pageindex_search(query: str, top_k: int = 5) -> list[dict]:
         return []
 
     client = _get_client()
-    resp = client.chat_completions(
-        messages=[{"role": "user", "content": query}],
-        doc_id=list(doc_ids.values()),
-        enable_citations=True,
-    )
+
+    resp = None
+    last_error: Exception | None = None
+    for attempt in range(max_retries + 1):
+        try:
+            resp = client.chat_completions(
+                messages=[{"role": "user", "content": query}],
+                doc_id=list(doc_ids.values()),
+                enable_citations=True,
+            )
+            break
+        except Exception as e:  # PageIndexAPIError hoặc lỗi network/requests
+            last_error = e
+            if attempt < max_retries:
+                time.sleep(retry_delay)
+
+    if resp is None:
+        print(f"  [PageIndex] Bỏ qua sau {max_retries + 1} lần thử, lỗi: {last_error}")
+        return []
 
     answer = resp["choices"][0]["message"]["content"]
     clean_answer = _CITATION_TAG_RE.sub("", answer).strip()
