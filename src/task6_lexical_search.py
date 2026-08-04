@@ -13,30 +13,101 @@ BM25 hoạt động thế nào:
     - Document length normalization: document dài không bị ưu tiên quá mức
     - Formula: score(q,d) = Σ IDF(qi) * (tf(qi,d) * (k1+1)) / (tf(qi,d) + k1*(1-b+b*|d|/avgdl))
     - k1=1.5 (term saturation), b=0.75 (length normalization)
+
+CP1 note: Task 4 (chunking thật) chưa xong lúc viết module này, nên corpus ở
+đây tự chunk bằng CHUNK_SIZE/CHUNK_OVERLAP (đúng hằng số contract ở TASKS.md
+§2: 800/100) thay vì import từ task4. Khi Task 4 xong, có thể thay
+`_load_corpus_from_standardized()` bằng chunks thật (Task 5 dùng chung) mà
+không đổi contract của `lexical_search()`.
 """
 
+import re
 from pathlib import Path
 
-# TODO: Load corpus từ data/standardized/ hoặc từ vector store
-CORPUS: list[dict] = []  # List of {'content': str, 'metadata': dict}
+from rank_bm25 import BM25Okapi
+
+STANDARDIZED_DIR = Path(__file__).parent.parent / "data" / "standardized"
+
+CHUNK_SIZE = 800
+CHUNK_OVERLAP = 100
+
+_TOKEN_RE = re.compile(r"\w+", re.UNICODE)
 
 
-def build_bm25_index(corpus: list[dict]):
+def _tokenize(text: str) -> list[str]:
+    """Tokenize đơn giản: lowercase + tách theo ký tự chữ/số (hỗ trợ Unicode/tiếng Việt)."""
+    return _TOKEN_RE.findall(text.lower())
+
+
+def _chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> list[str]:
+    """Chunk text theo ký tự, có overlap. Chunk cuối rỗng sau strip sẽ bị bỏ."""
+    text = text.strip()
+    if len(text) <= chunk_size:
+        return [text] if text else []
+
+    step = chunk_size - overlap
+    chunks = []
+    for start in range(0, len(text), step):
+        piece = text[start:start + chunk_size].strip()
+        if piece:
+            chunks.append(piece)
+        if start + chunk_size >= len(text):
+            break
+    return chunks
+
+
+def _load_corpus_from_standardized(standardized_dir: Path = STANDARDIZED_DIR) -> list[dict]:
+    """
+    Đọc toàn bộ .md trong data/standardized/, chunk theo CHUNK_SIZE/CHUNK_OVERLAP.
+
+    Returns:
+        List of {'content': str, 'metadata': {'source', 'chunk_id', 'category'}}
+    """
+    corpus: list[dict] = []
+    if not standardized_dir.exists():
+        return corpus
+
+    for md_file in sorted(standardized_dir.rglob("*.md")):
+        content = md_file.read_text(encoding="utf-8")
+        category = "legal" if "legal" in md_file.parts else "news"
+        for i, chunk in enumerate(_chunk_text(content)):
+            corpus.append({
+                "content": chunk,
+                "metadata": {
+                    "source": md_file.name,
+                    "chunk_id": f"{md_file.stem}_{i}",
+                    "category": category,
+                },
+            })
+    return corpus
+
+
+# Cache toàn cục — lazy-build khi lexical_search() được gọi lần đầu.
+CORPUS: list[dict] = []
+_BM25_INDEX: BM25Okapi | None = None
+
+
+def build_bm25_index(corpus: list[dict]) -> BM25Okapi:
     """
     Xây dựng BM25 index từ corpus.
 
     Args:
         corpus: List of {'content': str, 'metadata': dict}
+
+    Returns:
+        BM25Okapi index đã fit trên corpus.
     """
-    # TODO: Implement BM25 index
-    #
-    # from rank_bm25 import BM25Okapi
-    #
-    # # Tokenize - có thể đơn giản split(), hoặc dùng underthesea cho tiếng Việt
-    # tokenized_corpus = [doc["content"].lower().split() for doc in corpus]
-    # bm25 = BM25Okapi(tokenized_corpus)
-    # return bm25
-    raise NotImplementedError("Implement build_bm25_index")
+    tokenized_corpus = [_tokenize(doc["content"]) for doc in corpus]
+    return BM25Okapi(tokenized_corpus)
+
+
+def _ensure_index() -> None:
+    """Lazy-load corpus từ data/standardized/ và build index nếu chưa có."""
+    global CORPUS, _BM25_INDEX
+    if _BM25_INDEX is not None:
+        return
+    CORPUS = _load_corpus_from_standardized()
+    _BM25_INDEX = build_bm25_index(CORPUS) if CORPUS else None
 
 
 def lexical_search(query: str, top_k: int = 10) -> list[dict]:
@@ -55,29 +126,33 @@ def lexical_search(query: str, top_k: int = 10) -> list[dict]:
         }
         Sorted by score descending.
     """
-    # TODO: Implement lexical search
-    #
-    # tokenized_query = query.lower().split()
-    # scores = bm25.get_scores(tokenized_query)
-    #
-    # # Get top_k indices
-    # import numpy as np
-    # top_indices = np.argsort(scores)[::-1][:top_k]
-    #
-    # results = []
-    # for idx in top_indices:
-    #     if scores[idx] > 0:
-    #         results.append({
-    #             "content": CORPUS[idx]["content"],
-    #             "score": float(scores[idx]),
-    #             "metadata": CORPUS[idx]["metadata"]
-    #         })
-    # return results
-    raise NotImplementedError("Implement lexical_search")
+    _ensure_index()
+    if _BM25_INDEX is None or not CORPUS:
+        return []
+
+    tokenized_query = _tokenize(query)
+    scores = _BM25_INDEX.get_scores(tokenized_query)
+
+    ranked = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:top_k]
+
+    results = []
+    for idx in ranked:
+        if scores[idx] <= 0:
+            continue
+        results.append({
+            "content": CORPUS[idx]["content"],
+            "score": float(scores[idx]),
+            "metadata": CORPUS[idx]["metadata"],
+        })
+    return results
 
 
 if __name__ == "__main__":
-    # Test
-    results = lexical_search("phương thức thanh toán shopee", top_k=5)
-    for r in results:
-        print(f"[{r['score']:.3f}] {r['content'][:100]}...")
+    # Test tạm trên data/standardized/ (Task 3 của R1 đã push)
+    for q in ["quy dinh an toan xe may", "ha giang lich trinh", "dang ky luu tru khach san"]:
+        print(f"\nQuery: {q}")
+        results = lexical_search(q, top_k=5)
+        if not results:
+            print("  (không có kết quả)")
+        for r in results:
+            print(f"  [{r['score']:.3f}] {r['metadata']['source']} :: {r['content'][:80]}...")
