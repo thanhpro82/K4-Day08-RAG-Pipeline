@@ -54,50 +54,59 @@ st.set_page_config(
 _FAKE_CORPUS = [
     {
         "content": (
-            "Hà Giang: Cung đường Đồng Văn - Mèo Vạc nên đi xe máy vào mùa hoa tam giác mạch "
-            "(tháng 10-11) hoặc mùa lúa chín (tháng 9). Đèo Mã Pí Lèng là điểm ngắm cảnh không "
-            "thể bỏ qua. Nên xuất phát sớm 6-7h sáng để tránh sương mù và nắng gắt buổi trưa."
+            "Lịch trình Hà Giang 3N2Đ: Ngày 1 TP Hà Giang - Quản Bạ - Yên Minh - Đồng Văn (Núi Đôi "
+            "Cô Tiên, Dinh thự Họ Vương). Ngày 2 Đồng Văn - Mã Pì Lèng - Hẻm Tu Sản (đi thuyền sông "
+            "Nho Quế) - Mèo Vạc. Ngày 3 Mèo Vạc - Mậu Duệ - về TP Hà Giang. Chi phí khoảng "
+            "2.000.000đ/người."
         ),
         "score": 0.91,
-        "metadata": {"source": "cam-nang-ha-giang.md", "chunk_id": "ha-giang-001", "category": "news"},
+        "metadata": {"source": "article_01.md", "chunk_id": "ha-giang-itinerary-001", "category": "news"},
     },
     {
         "content": (
-            "Quy Nhơn: Đặc sản nhất định phải thử gồm bánh xèo tôm nhảy, bún chả cá, nem chợ "
-            "huyện và bánh hỏi lòng heo. Khu ẩm thực đêm gần biển Quy Nhơn có nhiều quán ăn "
-            "chuẩn vị địa phương với giá bình dân."
+            "Top món ăn Quy Nhơn - Phú Yên: bánh hỏi lòng heo, bún chả cá, mắt cá ngừ đại dương hầm "
+            "thuốc bắc, bánh xèo tôm nhảy Rau Mầm, cơm gà Phú Yên. Điểm tham quan nổi bật: Eo Gió, "
+            "Kỳ Co, Gành Đá Đĩa, Mũi Điện."
         ),
         "score": 0.88,
-        "metadata": {"source": "cam-nang-quy-nhon.md", "chunk_id": "quy-nhon-001", "category": "news"},
+        "metadata": {"source": "article_02.md", "chunk_id": "quy-nhon-food-001", "category": "news"},
     },
     {
         "content": (
-            "Đà Lạt: Thời tiết se lạnh quanh năm, nhiệt độ trung bình 18-23 độ C. Nên mang theo "
-            "áo khoác nhẹ kể cả mùa hè. Các điểm tham quan nổi bật: Hồ Xuân Hương, Thung lũng "
-            "Tình Yêu, Đồi chè Cầu Đất, Ga Đà Lạt cổ."
+            "Kinh nghiệm Đà Lạt 4N3Đ tiết kiệm: thuê homestay ngoại thành cách trung tâm 2-3km giá "
+            "từ 250.000đ/đêm, di chuyển bằng xe máy 120.000đ/ngày, ăn ở quán ăn địa phương trong "
+            "hẻm thay vì nhà hàng du lịch lớn. Lịch trình: Đèo Prenn, Hồ Xuân Hương, Đồi chè Cầu "
+            "Đất, Thung lũng Tình Yêu, Thác Datanla."
         ),
         "score": 0.85,
-        "metadata": {"source": "cam-nang-da-lat.md", "chunk_id": "da-lat-001", "category": "news"},
+        "metadata": {"source": "article_03.md", "chunk_id": "da-lat-itinerary-001", "category": "news"},
     },
     {
         "content": (
-            "Quy định an toàn du lịch: Khi tham gia các hoạt động mạo hiểm (leo núi, đi thuyền, "
-            "trekking) du khách bắt buộc phải mua bảo hiểm du lịch và tuân thủ hướng dẫn của "
-            "hướng dẫn viên địa phương. Luôn mang theo giấy tờ tùy thân và thông báo lịch trình "
-            "cho người thân."
+            "Quy định an toàn du lịch xe máy Hà Giang: bắt buộc có giấy phép lái xe hợp lệ, đội mũ "
+            "bảo hiểm đạt chuẩn, mang bảo hộ và kiểm tra phanh định kỳ. Tốc độ tối đa 30km/h trên "
+            "đèo dốc, sương mù; không di chuyển sau 19h00 trên các đoạn đèo nguy hiểm như Mã Pì Lèng."
         ),
         "score": 0.82,
-        "metadata": {"source": "quy-dinh-an-toan-du-lich.md", "chunk_id": "an-toan-001", "category": "legal"},
+        "metadata": {"source": "quy-dinh-an-toan-du-lich-ha-giang.md", "chunk_id": "an-toan-ha-giang-001", "category": "legal"},
     },
     {
         "content": (
-            "Quy định lưu trú homestay/khách sạn: Khách lưu trú phải xuất trình CMND/CCCD hoặc "
-            "hộ chiếu khi nhận phòng. Giờ check-in tiêu chuẩn là 14h, check-out 12h. Một số "
-            "homestay yêu cầu đặt cọc trước và có chính sách hủy phòng khác nhau, cần đọc kỹ "
-            "trước khi đặt."
+            "Quy định lưu trú khách sạn/homestay: khách phải xuất trình CCCD/Hộ chiếu để khai báo "
+            "tạm trú. Check-in 14h00; hủy phòng miễn phí trước 48h, hủy trong 24-48h mất phí 50% "
+            "đêm đầu, hủy trong 24h không hoàn tiền. Giữ yên tĩnh sau 22h00."
         ),
         "score": 0.79,
-        "metadata": {"source": "quy-dinh-luu-tru.md", "chunk_id": "luu-tru-001", "category": "legal"},
+        "metadata": {"source": "huong-dan-dang-ky-lu-tru-khach-san.md", "chunk_id": "luu-tru-001", "category": "legal"},
+    },
+    {
+        "content": (
+            "Quy định bảo tồn di sản biển Quy Nhơn - Phú Yên: không dẫm/bẻ/mang san hô khỏi khu bảo "
+            "tồn Kỳ Co, Hòn Khô, Eo Gió. Chỉ tắm biển ở khu vực có phao báo hiệu và cứu hộ; bắt buộc "
+            "mặc áo phao khi chơi mô tô nước hoặc dù bay."
+        ),
+        "score": 0.76,
+        "metadata": {"source": "quy-dinh-bao-ton-di-san-quy-nhon-phu-yen.md", "chunk_id": "bao-ton-quy-nhon-001", "category": "legal"},
     },
 ]
 
